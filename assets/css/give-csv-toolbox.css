@@ -1,0 +1,21 @@
+/**
+ * CSS Toolbox
+ */
+
+
+#give-csv-toolbox-standard-fields, #give-csv-toolbox-custom-fields-wrap, #give-csv-toolbox-submit-wrap {
+	display:none;
+}
+
+#give-csv-toolbox-submit-wrap {
+	clear: both;
+	background: #f5f5f5;
+	border-color: #dfdfdf;
+	overflow: auto;
+	margin: 15px 0 8px;
+	padding: 12px;
+	border-width: 1px;
+	border-style: solid;
+	font-size: 13px;
+	line-height: 2.1em;
+}
