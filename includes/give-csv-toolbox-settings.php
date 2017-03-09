@@ -82,7 +82,7 @@ if ( ! class_exists( 'Give_Settings_CSV' ) ) :
 			<div class="give-csv-toolbox">
 				<div class="give-csv-toolbox-title-wrap">
 					<h3><span><?php esc_html_e( 'Export Donations and Custom Fields to CSV', 'give' ); ?></span></h3>
-					<p><?php _e( 'Download an export of donors for specific donation forms with the option to include custom fields', 'give' ); ?></p>
+					<p><?php _e( 'Download an export of donors for specific donation forms with the option to include custom fields.', 'give' ); ?></p>
 				</div>
 				<td>
 					<form method="post" id="give-csv-toolbox">
@@ -146,6 +146,8 @@ if ( ! class_exists( 'Give_Settings_CSV' ) ) :
 						<div id="give-csv-toolbox-custom-fields-wrap">
 							<!-- content here loaded via AJAX -->
 							<h4><?php esc_html_e( 'Custom Field Columns:', 'give' ); ?></h4>
+							<p><?php esc_html_e( 'The following fields may have been created by Form Field Manager, custom code, or another plugin.', 'give' ); ?></p>
+
 
 							<div id="csv-toolbox-non-hidden-fields-wrap">
 								<ul id="give-csv-toolbox-standard-field-list" class="give-csv-toolbox-field-list">
@@ -154,7 +156,7 @@ if ( ! class_exists( 'Give_Settings_CSV' ) ) :
 							</div>
 
 							<h4><?php esc_html_e( 'Hidden Custom Field Columns:', 'give' ); ?></h4>
-
+                            <p><?php esc_html_e( 'The following hidden custom fields contain data created by Give Core, a Give Add-on, another plugin, etc. Hidden fields are generally used for programming logic, but you may contain data you would like to export.', 'give' ); ?></p>
 							<div id="csv-toolbox-hidden-fields-wrap">
 								<ul id="give-csv-toolbox-hidden-field-list" class="give-csv-toolbox-field-list">
 								</ul>
