@@ -142,6 +142,13 @@ if ( ! class_exists( 'Give_Settings_CSV' ) ) :
                             <h4><?php esc_html_e( 'Standard Columns:', 'give' ); ?></h4>
                             <ul id="give-export-option-ul">
                                 <li>
+                                    <label for="give-export-donation-id">
+                                        <input type="checkbox" checked
+                                               name="give_csv_toolbox_export_option[donation_id]"
+                                               id="give-export-donation-id"><?php esc_html_e( 'Donation ID', 'give' ); ?>
+                                    </label>
+                                </li>
+                                <li>
                                     <label for="give-export-first-name">
                                         <input type="checkbox" checked
                                                name="give_csv_toolbox_export_option[first_name]"

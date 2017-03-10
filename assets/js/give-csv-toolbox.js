@@ -90,7 +90,7 @@ jQuery.noConflict();
 
 		} else {
 
-			standard_field_list.append( '<li class="give-csv-toolbox-no-fields"><span class="dashicons dashicons-info"></span>No standard fields found.</li>' );
+			standard_field_list.append( '<li class="give-csv-toolbox-no-fields"><span class="dashicons dashicons-info"></span>No fields found.</li>' );
 
 		}
 
@@ -106,7 +106,7 @@ jQuery.noConflict();
 
 		} else {
 
-			hidden_field_list.append( '<li class="give-csv-toolbox-no-fields"><span class="dashicons dashicons-info"></span>No hidden fields found.</li>' );
+			hidden_field_list.append( '<li class="give-csv-toolbox-no-fields"><span class="dashicons dashicons-info"></span>No fields found.</li>' );
 
 		}
 

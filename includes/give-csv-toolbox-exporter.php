@@ -108,6 +108,9 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 		foreach ( $columns as $key => $value ) {
 
 			switch ( $key ) {
+				case 'donation_id' :
+					$cols['donation_id'] = __( 'Donation ID', 'give' );
+					break;
 				case 'first_name' :
 					$cols['first_name'] = __( 'First Name', 'give' );
 					break;
@@ -179,8 +182,8 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 
 		$data    = array();
 		$columns = $this->csv_cols();
-		$i = 0;
-		
+		$i       = 0;
+
 		$args = array(
 			'number'     => 30,
 			'page'       => $this->step,
@@ -223,7 +226,7 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 				$total        = give_get_payment_amount( $payment->ID );
 				$user_id      = isset( $user_info['id'] ) && $user_info['id'] != - 1 ? $user_info['id'] : $user_info['email'];
 
-				$payment = new Give_Payment($payment->ID);
+				$payment = new Give_Payment( $payment->ID );
 
 				if ( is_numeric( $user_id ) ) {
 					$user = get_userdata( $user_id );
@@ -239,49 +242,51 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 				$name_array = explode( ' ', $customer->name );
 
 				// Set columns
+				if ( ! empty( $columns['donation_id'] ) ) {
+					$data[ $i ]['donation_id'] = $payment->ID;
+				}
 				if ( ! empty( $columns['first_name'] ) ) {
-					$data[$i]['first_name'] = isset( $name_array[0] ) ? $name_array[0] : '';
+					$data[ $i ]['first_name'] = isset( $name_array[0] ) ? $name_array[0] : '';
 				}
 				if ( ! empty( $columns['last_name'] ) ) {
-					$data[$i]['last_name'] = ( isset( $name_array[1] ) ? $name_array[1] : '' ) . ( isset( $name_array[2] ) ? ' ' . $name_array[2] : '' ) . ( isset( $name_array[3] ) ? ' ' . $name_array[3] : '' );
+					$data[ $i ]['last_name'] = ( isset( $name_array[1] ) ? $name_array[1] : '' ) . ( isset( $name_array[2] ) ? ' ' . $name_array[2] : '' ) . ( isset( $name_array[3] ) ? ' ' . $name_array[3] : '' );
 				}
 				if ( ! empty( $columns['email'] ) ) {
-					$data[$i]['email'] = $customer->email;
+					$data[ $i ]['email'] = $customer->email;
 				}
 				if ( ! empty( $columns['address_line1'] ) ) {
-					$data[$i]['address_line1']   = isset( $address['line1'] ) ? $address['line1'] : '';
-					$data[$i]['address_line2']   = isset( $address['line2'] ) ? $address['line2'] : '';
-					$data[$i]['address_city']    = isset( $address['city'] ) ? $address['city'] : '';
-					$data[$i]['address_state']   = isset( $address['state'] ) ? $address['state'] : '';
-					$data[$i]['address_zip']     = isset( $address['zip'] ) ? $address['zip'] : '';
-					$data[$i]['address_country'] = isset( $address['country'] ) ? $address['country'] : '';
+					$data[ $i ]['address_line1']   = isset( $address['line1'] ) ? $address['line1'] : '';
+					$data[ $i ]['address_line2']   = isset( $address['line2'] ) ? $address['line2'] : '';
+					$data[ $i ]['address_city']    = isset( $address['city'] ) ? $address['city'] : '';
+					$data[ $i ]['address_state']   = isset( $address['state'] ) ? $address['state'] : '';
+					$data[ $i ]['address_zip']     = isset( $address['zip'] ) ? $address['zip'] : '';
+					$data[ $i ]['address_country'] = isset( $address['country'] ) ? $address['country'] : '';
 				}
 
 				if ( ! empty( $columns['donation_total'] ) ) {
-					$data[$i]['donation_total'] = give_currency_filter( give_format_amount( give_get_payment_amount( $payment->ID ) ) );
+					$data[ $i ]['donation_total'] = give_currency_filter( give_format_amount( give_get_payment_amount( $payment->ID ) ) );
 				}
 
 				if ( ! empty( $columns['payment_gateway'] ) ) {
-					$data[$i]['payment_gateway'] = $payment->gateway;
+					$data[ $i ]['payment_gateway'] = $payment->gateway;
 				}
 
-
 				if ( ! empty( $columns['form_id'] ) ) {
-					$data[$i]['form_id'] = $payment->form_id;
+					$data[ $i ]['form_id'] = $payment->form_id;
 				}
 
 				if ( ! empty( $columns['form_title'] ) ) {
-					$data[$i]['form_title'] = get_the_title( $payment->form_id );
+					$data[ $i ]['form_title'] = get_the_title( $payment->form_id );
 				}
 
 				if ( ! empty( $columns['form_level_id'] ) ) {
-					$data[$i]['form_level_id'] = $payment->price_id;
+					$data[ $i ]['form_level_id'] = $payment->price_id;
 				}
 
 				if ( ! empty( $columns['form_level_title'] ) ) {
 					$var_prices = give_has_variable_prices( $payment_meta['form_id'] );
 					if ( empty( $var_prices ) ) {
-						$data[$i]['form_level_title'] = '';
+						$data[ $i ]['form_level_title'] = '';
 					} else {
 						$prices_atts = '';
 						if ( $variable_prices = give_get_variable_prices( $payment_meta['form_id'] ) ) {
@@ -289,40 +294,39 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 								$prices_atts[ $variable_price['_give_id']['level_id'] ] = give_format_amount( $variable_price['_give_amount'] );
 							}
 						}
-						$data[$i]['form_level_title'] = give_get_price_option_name( $payment->form_id, $payment->price_id );
+						$data[ $i ]['form_level_title'] = give_get_price_option_name( $payment->form_id, $payment->price_id );
 					}
 				}
 
+				if ( ! empty( $columns['donation_date'] ) ) {
+					$payment_date                = strtotime( $payment->date );
+					$data[ $i ]['donation_date'] = date( give_date_format(), $payment_date );
+				}
 
-				// 	case 'form_level_id' :
-				// 		$cols['form_level_id'] = __( 'Level ID', 'give' );
-				// 		break;
-				// 	case 'form_level_title' :
-				// 		$cols['form_level_title'] = __( 'Level Title', 'give' );
-				// 		break;
-				// 	case 'donation_date' :
-				// 		$cols['donation_date'] = __( 'Donation Date', 'give' );
-				// 		break;
-				// 	case 'donation_time' :
-				// 		$cols['donation_time'] = __( 'Donation Time', 'give' );
-				// 		break;
-				// 	case 'userid' :
-				// 		$cols['userid'] = __( 'User ID', 'give' );
-				// 		break;
-				// 	case 'donorid' :
-				// 		$cols['donorid'] = __( 'Donor ID', 'give' );
-				// 		break;
-				// 	case 'donor_ip' :
-				// 		$cols['donor_ip'] = __( 'Donor IP Address', 'give' );
-				// 		break;
+				if ( ! empty( $columns['donation_time'] ) ) {
+					$payment_date                = strtotime( $payment->date );
+					$data[ $i ]['donation_time'] = date_i18n( 'H', $payment_date ) . ':' . date( 'i', $payment_date );
+				}
 
-				$i++;
+				if ( ! empty( $columns['userid'] ) ) {
+					$data[ $i ]['userid'] = $payment->user_id;
+				}
+
+				if ( ! empty( $columns['donorid'] ) ) {
+					$data[ $i ]['donorid'] = $payment->customer_id;
+				}
+
+				if ( ! empty( $columns['donor_ip'] ) ) {
+					$data[ $i ]['donor_ip'] = give_get_payment_user_ip( $payment->ID );
+				}
+
+				$i ++;
 			}
-// echo "<pre>";
-// var_dump($payment);
-// var_dump($data);
-// echo "</pre>";
-// die();
+			// echo "<pre>";
+			// var_dump($payment);
+			// var_dump($data);
+			// echo "</pre>";
+			// die();
 			$data = apply_filters( 'give_export_get_data', $data );
 			$data = apply_filters( "give_export_get_data_{$this->export_type}", $data );
 
