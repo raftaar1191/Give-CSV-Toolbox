@@ -22,7 +22,12 @@ function give_csv_toolbox_get_custom_fields() {
 		return false;
 	}
 
-	$donation_list = implode( '\',\'', give_get_payments( array( 'give_forms' => array( $form_id ), 'posts_per_page' => -1, 'fields' => 'ids' ) ) );
+	$args          = array(
+		'give_forms'     => array( $form_id ),
+		'posts_per_page' => - 1,
+		'fields'         => 'ids'
+	);
+	$donation_list = implode( '\',\'', give_get_payments( $args ) );
 
 	$query = "
         SELECT DISTINCT($wpdb->postmeta.meta_key) 
@@ -35,9 +40,6 @@ function give_csv_toolbox_get_custom_fields() {
         AND $wpdb->postmeta.meta_key NOT RegExp '(^[_0-9].+$)'
     ";
 
-	// echo $form_id;
-	// echo $wpdb->prepare( $query, array( $post_type,  ) );
-	// die();
 	$meta_keys = $wpdb->get_col( $wpdb->prepare( $query, $post_type, $donation_list ) );
 
 	$query = "
@@ -60,3 +62,27 @@ function give_csv_toolbox_get_custom_fields() {
 }
 
 add_action( 'wp_ajax_give_csv_toolbox_get_custom_fields', 'give_csv_toolbox_get_custom_fields' );
+
+
+/**
+ * Register the payments batch exporter
+ *
+ * @since  1.0
+ */
+function give_register_csv_toolbox_batch_export() {
+	add_action( 'give_batch_export_class_include', 'give_csv_toolbox_include_export_class', 10, 1 );
+}
+
+add_action( 'give_register_batch_exporter', 'give_register_csv_toolbox_batch_export', 10 );
+
+
+/**
+ * Includes the CSV Toolbox Custom Exporter Class.
+ *
+ * @param $class Give_CSV_Toolbox_Donations_Export
+ */
+function give_csv_toolbox_include_export_class( $class ) {
+	if ( 'Give_CSV_Toolbox_Donations_Export' === $class ) {
+		require_once GIVE_CSV_TOOLBOX_DIR . 'includes/give-csv-toolbox-exporter.php';
+	}
+}

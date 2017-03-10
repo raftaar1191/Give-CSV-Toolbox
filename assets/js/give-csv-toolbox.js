@@ -25,7 +25,11 @@ jQuery.noConflict();
 
 		$( 'select[name="forms"]' ).chosen().change(function () {
 
-			$( '#give-csv-toolbox-standard-fields, #give-csv-toolbox-custom-fields-wrap, #give-csv-toolbox-submit-wrap' ).hide();
+			var toggle_fields = $( '#give-csv-toolbox-standard-fields, #give-csv-toolbox-custom-fields-wrap, #give-csv-toolbox-submit-wrap, #give-csv-toolbox-export-options' );
+
+			// Hide when change is made for a form.
+			toggle_fields.hide();
+			$( 'input[type="submit"]' ).removeClass( 'button-disabled' );
 
 			var give_form_id,
 				variable_prices_html_container = $( '.give-donation-level' );
@@ -51,9 +55,8 @@ jQuery.noConflict();
 
 					if (response) {
 
-						console.log( response );
 						output_csv_toolbox_fields( response );
-						$( '#give-csv-toolbox-standard-fields, #give-csv-toolbox-custom-fields-wrap, #give-csv-toolbox-submit-wrap' ).slideDown();
+						toggle_fields.slideDown();
 
 					} else {
 
@@ -73,23 +76,39 @@ jQuery.noConflict();
 	 */
 	function output_csv_toolbox_fields(response) {
 
-		var standard_fields = (typeof response.standard_fields !== 'undefined') ? response.standard_fields : 'No Custom Fields Found.';
+		var standard_fields = (typeof response.standard_fields !== 'undefined') ? response.standard_fields : 'No custom Fields Found.';
+		var standard_field_list = $( '#give-csv-toolbox-standard-field-list' );
 
-		// Loop through STANDARD fields & output
-		$( standard_fields ).each(function (index, value) {
+		if (standard_fields.length > 0) {
 
-			$( '#give-csv-toolbox-standard-field-list' ).append( '<li><label for="give-csv-toolkit-standard-field-' + value + '""><input type="checkbox" name="give_csv_toolkit_export_field[' + value + ']" id="give-csv-toolkit-standard-field-' + value + '">' + value + '</label> </li>' );
+			// Loop through STANDARD fields & output
+			$( standard_fields ).each(function (index, value) {
 
-		});
+				standard_field_list.append( '<li><label for="give-csv-toolkit-standard-field-' + value + '""><input type="checkbox" name="give_csv_toolkit_export_field[' + value + ']" id="give-csv-toolkit-standard-field-' + value + '">' + value + '</label> </li>' );
 
-		var hidden_fields = (typeof response.hidden_fields !== 'undefined') ? response.hidden_fields : 'No Hidden Custom Fields Found.';
+			});
 
-		// Loop through HIDDEN fields & output
-		$( hidden_fields ).each(function (index, value) {
+		} else {
 
-			$( '#give-csv-toolbox-hidden-field-list' ).append( '<li><label for="give-csv-toolkit-hidden-field-' + value + '""><input type="checkbox" name="give_csv_toolkit_export_field[' + value + ']" id="give-csv-toolkit-hidden-field-' + value + '">' + value + '</label> </li>' );
+			standard_field_list.append( '<li class="give-csv-toolbox-no-fields"><span class="dashicons dashicons-info"></span>No standard fields found.</li>' );
 
-		});
+		}
+
+		var hidden_fields = (typeof response.hidden_fields !== 'undefined') ? response.hidden_fields : '';
+		var hidden_field_list = $( '#give-csv-toolbox-hidden-field-list' );
+
+		if (hidden_fields.length > 0) {
+
+			// Loop through HIDDEN fields & output
+			$( hidden_fields ).each(function (index, value) {
+				hidden_field_list.append( '<li><label for="give-csv-toolkit-hidden-field-' + value + '""><input type="checkbox" name="give_csv_toolkit_export_field[' + value + ']" id="give-csv-toolkit-hidden-field-' + value + '">' + value + '</label> </li>' );
+			});
+
+		} else {
+
+			hidden_field_list.append( '<li class="give-csv-toolbox-no-fields"><span class="dashicons dashicons-info"></span>No hidden fields found.</li>' );
+
+		}
 
 	}
 
