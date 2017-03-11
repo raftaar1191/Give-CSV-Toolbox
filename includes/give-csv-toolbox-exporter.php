@@ -161,6 +161,8 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 				case 'donor_ip' :
 					$cols['donor_ip'] = __( 'Donor IP Address', 'give' );
 					break;
+				default:
+					$cols[ $key ] = $key;
 
 			}
 		}
@@ -222,20 +224,9 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 			foreach ( $payments as $payment ) {
 
 				$payment_meta = give_get_payment_meta( $payment->ID );
-				$user_info    = give_get_payment_meta_user_info( $payment->ID );
-				$total        = give_get_payment_amount( $payment->ID );
-				$user_id      = isset( $user_info['id'] ) && $user_info['id'] != - 1 ? $user_info['id'] : $user_info['email'];
-
-				$payment = new Give_Payment( $payment->ID );
-
-				if ( is_numeric( $user_id ) ) {
-					$user = get_userdata( $user_id );
-				} else {
-					$user = false;
-				}
-
-				$customer = new Give_Customer( give_get_payment_customer_id( $payment->ID ) );
-				$address  = '';
+				$payment      = new Give_Payment( $payment->ID );
+				$customer     = new Give_Customer( give_get_payment_customer_id( $payment->ID ) );
+				$address      = '';
 				if ( isset( $customer->user_id ) && $customer->user_id > 0 ) {
 					$address = give_get_donor_address( $customer->user_id );
 				}
@@ -320,21 +311,156 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 					$data[ $i ]['donor_ip'] = give_get_payment_user_ip( $payment->ID );
 				}
 
+				// Add custom field data.
+				// First we remove the standard included keys from above.
+				$remove_keys = array(
+					'donation_id',
+					'first_name',
+					'last_name',
+					'email',
+					'address_line1',
+					'address_line2',
+					'address_city',
+					'address_state',
+					'address_zip',
+					'address_country',
+					'donation_total',
+					'payment_gateway',
+					'form_id',
+					'form_title',
+					'form_level_id',
+					'form_level_title',
+					'donation_date',
+					'donation_time',
+					'userid',
+					'donorid',
+					'donor_ip',
+				);
+
+				// Removing above keys...
+				foreach ( $remove_keys as $key ) {
+					unset( $columns[ $key ] );
+				}
+
+				// Is FFM available? Take care of repeater fields.
+				if ( class_exists( 'Give_FFM_Render_Form' ) ) {
+					// Get the custom fields for the payment's form.
+					$ffm = new Give_FFM_Render_Form();
+					list( $post_fields, $taxonomy_fields, $custom_fields ) = $ffm->get_input_fields( $payment->form_id );
+
+					// Loop through the fields.
+					foreach ( $custom_fields as $field ) {
+
+						// Check if this custom field should be exported first.
+						if ( empty( $columns[ $field['name'] ] ) ) {
+							continue;
+						}
+
+						// Check for Repeater Columns
+						if ( isset( $field['multiple'] ) ) {
+
+							$num_columns = count( $field['columns'] );
+
+							// Loop through columns
+							for ( $count = 0; $count < $num_columns; $count ++ ) {
+
+								$keyname = give_csv_toolbox_create_column_key($field['columns'][ $count ]);
+								$items   = (array) $ffm->get_meta( $payment->ID, $field['name'], 'post', false );
+
+								// Reassemble arrays.
+								if ( $items ) {
+
+									$final_vals = array();
+
+									foreach ( $items as $item_val ) {
+
+										$item_val = explode( $ffm::$separator, $item_val );
+
+										// Add relevant fields to array.
+										$final_vals[ $count ][] = $item_val[ $count ];
+									}
+
+									$data[ $i ][ $keyname ] = implode( '| ', $final_vals[ $count ] );
+
+								}
+							}
+
+							// Unset this could to prevent
+							// catchall custom field loop below.
+							unset( $columns[ $field['name'] ] );
+						}
+					}
+
+				}
+
+				// Now loop through remaining meta fields.
+				foreach ( $columns as $col ) {
+					$field_data         = get_post_meta( $payment->ID, $col, true );
+					$data[ $i ][ $col ] = $field_data;
+					unset( $columns[ $col ] );
+				}
+
 				$i ++;
+
 			}
-			// echo "<pre>";
-			// var_dump($payment);
-			// var_dump($data);
-			// echo "</pre>";
-			// die();
+
 			$data = apply_filters( 'give_export_get_data', $data );
 			$data = apply_filters( "give_export_get_data_{$this->export_type}", $data );
+			echo '<pre>';
+			var_dump( $data );
+			echo '</pre>';
+			die();
 
 			return $data;
 
 		}
 
 		return array();
+
+	}
+
+
+	/**
+	 * @param $i
+	 * @param $data
+	 * @param $payment
+	 * @param $ffm
+	 *
+	 * @return mixed
+	 */
+	public function ffm_export( $i, $data, $payment, $ffm, $field ) {
+
+		// Check for Repeater Columns
+		if ( isset( $field['multiple'] ) ) {
+
+			$num_columns = count( $field['columns'] );
+
+			// Loop through columns
+			for ( $count = 0; $count < $num_columns; $count ++ ) {
+
+				$keyname = give_csv_toolbox_create_column_key($field['columns'][ $count ]);
+				$items   = (array) $ffm->get_meta( $payment->ID, $field['name'], 'post', false );
+
+				// Reassemble arrays.
+				if ( $items ) {
+
+					$final_vals = array();
+
+					foreach ( $items as $item_val ) {
+
+						$item_val = explode( $ffm::$separator, $item_val );
+
+						// Add relevant fields to array.
+						$final_vals[ $count ][] = $item_val[ $count ];
+					}
+
+					$data[ $i ][ $keyname ] = implode( '| ', $final_vals[ $count ] );
+
+				}
+			}
+		}
+
+		return $data[ $i ];
 
 	}
 

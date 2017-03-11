@@ -258,9 +258,17 @@ if ( ! class_exists( 'Give_Settings_CSV' ) ) :
                         </div>
 
                         <div id="give-csv-toolbox-custom-fields-wrap">
+                            <h4><?php esc_html_e( 'Form Field Manager Fields:', 'give' ); ?></h4>
+                            <p><?php esc_html_e( 'The following fields have been created by Form Field Manager.', 'give' ); ?></p>
+
+                            <div id="csv-toolbox-ffm-fields-wrap">
+                                <ul id="give-csv-toolbox-ffm-field-list" class="give-csv-toolbox-field-list">
+                                </ul>
+                            </div>
+
                             <!-- content here loaded via AJAX -->
                             <h4><?php esc_html_e( 'Custom Field Columns:', 'give' ); ?></h4>
-                            <p><?php esc_html_e( 'The following fields may have been created by Form Field Manager, custom code, or another plugin.', 'give' ); ?></p>
+                            <p><?php esc_html_e( 'The following fields may have been created by custom code, or another plugin.', 'give' ); ?></p>
 
 
                             <div id="csv-toolbox-non-hidden-fields-wrap">
