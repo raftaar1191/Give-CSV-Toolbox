@@ -100,12 +100,12 @@ jQuery.noConflict();
 					$(repeater_sections).each(function (index, value) {
 
 						if(parent_title !== value.parent_title) {
-							ffm_field_list.append('<li class="repeater-section-title"><label for="give-csv-toolkit-ffm-field-' + value.parent_meta + '"><input type="checkbox" name="give_csv_toolbox_export_option[' + value.parent_meta + ']" id="give-csv-toolkit-ffm-field-' + value.parent_meta + '">' + value.parent_title + '</label></li>');
+							ffm_field_list.append('<li class="repeater-section-title"><label for="give-csv-toolkit-ffm-field-' + value.parent_meta + '"><input type="checkbox" name="give_csv_toolbox_export_parent[' + value.parent_meta + ']" id="give-csv-toolkit-ffm-field-' + value.parent_meta + '">' + value.parent_title + '</label></li>');
 						}
 						 parent_title = value.parent_title;
 
 
-						ffm_field_list.append('<li class="repeater-section"><label for="give-csv-toolkit-ffm-field-' + value.subkey + '"><input type="checkbox" name="give_csv_toolbox_export_option[' + value.metakey + ']" id="give-csv-toolkit-ffm-field-' + value.subkey + '">' + value.label + '</label></li>');
+						ffm_field_list.append('<li class="repeater-section"><label for="give-csv-toolkit-ffm-field-' + value.subkey + '"><input type="checkbox" name="give_csv_toolbox_export_option[' + value.subkey + ']" id="give-csv-toolkit-ffm-field-' + value.subkey + '">' + value.label + '</label></li>');
 
 					});
 

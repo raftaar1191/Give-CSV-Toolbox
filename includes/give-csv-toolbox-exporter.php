@@ -40,6 +40,14 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 	private $data = array();
 
 	/**
+	 * Form submission data
+	 *
+	 * @var array
+	 * @since 1.0
+	 */
+	private $cols = array();
+
+	/**
 	 * Form ID
 	 *
 	 * @var string
@@ -61,15 +69,12 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 			parse_str( $_POST['form'], $this->data );
 		}
 
-		$this->form = $this->data['forms'];
-
-		$this->form_id = ! empty( $request['forms'] ) && 0 !== $request['forms'] ? absint( $request['forms'] ) : null;
-
+		$this->form     = $this->data['forms'];
+		$this->form_id  = ! empty( $request['forms'] ) && 0 !== $request['forms'] ? absint( $request['forms'] ) : null;
 		$this->price_id = isset( $request['give_price_option'] ) && ( 'all' !== $request['give_price_option'] && '' !== $request['give_price_option'] ) ? absint( $request['give_price_option'] ) : null;
-
-		$this->start  = isset( $request['start'] ) ? sanitize_text_field( $request['start'] ) : '';
-		$this->end    = isset( $request['end'] ) ? sanitize_text_field( $request['end'] ) : '';
-		$this->status = isset( $request['status'] ) ? sanitize_text_field( $request['status'] ) : 'complete';
+		$this->start    = isset( $request['start'] ) ? sanitize_text_field( $request['start'] ) : '';
+		$this->end      = isset( $request['end'] ) ? sanitize_text_field( $request['end'] ) : '';
+		$this->status   = isset( $request['status'] ) ? sanitize_text_field( $request['status'] ) : 'complete';
 	}
 
 	/**
@@ -88,9 +93,9 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 			return false;
 		}
 
-		$cols = $this->get_cols( $columns );
+		$this->cols = $this->get_cols( $columns );
 
-		return $cols;
+		return $this->cols;
 	}
 
 
@@ -182,9 +187,8 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 	 */
 	public function get_data() {
 
-		$data    = array();
-		$columns = $this->csv_cols();
-		$i       = 0;
+		$data = array();
+		$i    = 0;
 
 		$args = array(
 			'number'     => 30,
@@ -223,29 +227,31 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 
 			foreach ( $payments as $payment ) {
 
+				$columns      = $this->csv_cols();
 				$payment_meta = give_get_payment_meta( $payment->ID );
 				$payment      = new Give_Payment( $payment->ID );
 				$customer     = new Give_Customer( give_get_payment_customer_id( $payment->ID ) );
 				$address      = '';
+
 				if ( isset( $customer->user_id ) && $customer->user_id > 0 ) {
 					$address = give_get_donor_address( $customer->user_id );
 				}
 				$name_array = explode( ' ', $customer->name );
 
 				// Set columns
-				if ( ! empty( $columns['donation_id'] ) ) {
+				if ( ! empty( $this->cols['donation_id'] ) ) {
 					$data[ $i ]['donation_id'] = $payment->ID;
 				}
-				if ( ! empty( $columns['first_name'] ) ) {
+				if ( ! empty( $this->cols['first_name'] ) ) {
 					$data[ $i ]['first_name'] = isset( $name_array[0] ) ? $name_array[0] : '';
 				}
-				if ( ! empty( $columns['last_name'] ) ) {
+				if ( ! empty( $this->cols['last_name'] ) ) {
 					$data[ $i ]['last_name'] = ( isset( $name_array[1] ) ? $name_array[1] : '' ) . ( isset( $name_array[2] ) ? ' ' . $name_array[2] : '' ) . ( isset( $name_array[3] ) ? ' ' . $name_array[3] : '' );
 				}
-				if ( ! empty( $columns['email'] ) ) {
+				if ( ! empty( $this->cols['email'] ) ) {
 					$data[ $i ]['email'] = $customer->email;
 				}
-				if ( ! empty( $columns['address_line1'] ) ) {
+				if ( ! empty( $this->cols['address_line1'] ) ) {
 					$data[ $i ]['address_line1']   = isset( $address['line1'] ) ? $address['line1'] : '';
 					$data[ $i ]['address_line2']   = isset( $address['line2'] ) ? $address['line2'] : '';
 					$data[ $i ]['address_city']    = isset( $address['city'] ) ? $address['city'] : '';
@@ -254,7 +260,7 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 					$data[ $i ]['address_country'] = isset( $address['country'] ) ? $address['country'] : '';
 				}
 
-				if ( ! empty( $columns['donation_total'] ) ) {
+				if ( ! empty( $this->cols['donation_total'] ) ) {
 					$data[ $i ]['donation_total'] = give_currency_filter( give_format_amount( give_get_payment_amount( $payment->ID ) ) );
 				}
 
@@ -344,15 +350,17 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 
 				// Is FFM available? Take care of repeater fields.
 				if ( class_exists( 'Give_FFM_Render_Form' ) ) {
+
 					// Get the custom fields for the payment's form.
 					$ffm = new Give_FFM_Render_Form();
 					list( $post_fields, $taxonomy_fields, $custom_fields ) = $ffm->get_input_fields( $payment->form_id );
+					$parents = isset( $this->data['give_csv_toolbox_export_parent'] ) ? $this->data['give_csv_toolbox_export_parent'] : array();
 
 					// Loop through the fields.
 					foreach ( $custom_fields as $field ) {
 
 						// Check if this custom field should be exported first.
-						if ( empty( $columns[ $field['name'] ] ) ) {
+						if ( empty( $parents[ $field['name'] ] ) ) {
 							continue;
 						}
 
@@ -364,7 +372,7 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 							// Loop through columns
 							for ( $count = 0; $count < $num_columns; $count ++ ) {
 
-								$keyname = give_csv_toolbox_create_column_key($field['columns'][ $count ]);
+								$keyname = give_csv_toolbox_create_column_key( $field['columns'][ $count ] );
 								$items   = (array) $ffm->get_meta( $payment->ID, $field['name'], 'post', false );
 
 								// Reassemble arrays.
@@ -378,19 +386,26 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 
 										// Add relevant fields to array.
 										$final_vals[ $count ][] = $item_val[ $count ];
+
 									}
 
 									$data[ $i ][ $keyname ] = implode( '| ', $final_vals[ $count ] );
 
+								} else {
+									$data[ $i ][ $keyname ] = '';
 								}
+
+								$this->cols[$keyname] = '';
+
+								unset( $columns[ $keyname ] );
+
 							}
 
-							// Unset this could to prevent
-							// catchall custom field loop below.
+							unset($this->cols[$field['name']]);
+							// Unset this to prevent field from catchall field loop below.
 							unset( $columns[ $field['name'] ] );
 						}
 					}
-
 				}
 
 				// Now loop through remaining meta fields.
@@ -400,17 +415,13 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 					unset( $columns[ $col ] );
 				}
 
+				// Increment iterator.
 				$i ++;
 
 			}
 
 			$data = apply_filters( 'give_export_get_data', $data );
 			$data = apply_filters( "give_export_get_data_{$this->export_type}", $data );
-			echo '<pre>';
-			var_dump( $data );
-			echo '</pre>';
-			die();
-
 			return $data;
 
 		}
@@ -419,50 +430,6 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 
 	}
 
-
-	/**
-	 * @param $i
-	 * @param $data
-	 * @param $payment
-	 * @param $ffm
-	 *
-	 * @return mixed
-	 */
-	public function ffm_export( $i, $data, $payment, $ffm, $field ) {
-
-		// Check for Repeater Columns
-		if ( isset( $field['multiple'] ) ) {
-
-			$num_columns = count( $field['columns'] );
-
-			// Loop through columns
-			for ( $count = 0; $count < $num_columns; $count ++ ) {
-
-				$keyname = give_csv_toolbox_create_column_key($field['columns'][ $count ]);
-				$items   = (array) $ffm->get_meta( $payment->ID, $field['name'], 'post', false );
-
-				// Reassemble arrays.
-				if ( $items ) {
-
-					$final_vals = array();
-
-					foreach ( $items as $item_val ) {
-
-						$item_val = explode( $ffm::$separator, $item_val );
-
-						// Add relevant fields to array.
-						$final_vals[ $count ][] = $item_val[ $count ];
-					}
-
-					$data[ $i ][ $keyname ] = implode( '| ', $final_vals[ $count ] );
-
-				}
-			}
-		}
-
-		return $data[ $i ];
-
-	}
 
 	/**
 	 * Return the calculated completion percentage.
