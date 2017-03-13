@@ -15,12 +15,7 @@ jQuery.noConflict();
 	$(function () {
 
 		toggle_csv_toolbox_fields();
-		$('input[type="submit"]').on('click', function () {
-			setTimeout(function () {
-				$('input[type="submit"]').attr('class', 'button button-primary');
-			}, 800);
 
-		});
 	});
 
 	/**
@@ -61,6 +56,7 @@ jQuery.noConflict();
 
 						console.log(response);
 						output_csv_toolbox_fields(response);
+						checkbox_select_subfields();
 						toggle_fields.slideDown();
 
 					} else {
@@ -99,13 +95,13 @@ jQuery.noConflict();
 					// Repeater section field.
 					$(repeater_sections).each(function (index, value) {
 
-						if(parent_title !== value.parent_title) {
-							ffm_field_list.append('<li class="repeater-section-title"><label for="give-csv-toolkit-ffm-field-' + value.parent_meta + '"><input type="checkbox" name="give_csv_toolbox_export_parent[' + value.parent_meta + ']" id="give-csv-toolkit-ffm-field-' + value.parent_meta + '">' + value.parent_title + '</label></li>');
+						if (parent_title !== value.parent_title) {
+							ffm_field_list.append('<li class="repeater-section-title" data-parent-meta="' + value.parent_meta + '"><label for="give-csv-toolkit-ffm-field-' + value.parent_meta + '"><input type="checkbox" name="give_csv_toolbox_export_parent[' + value.parent_meta + ']" id="give-csv-toolkit-ffm-field-' + value.parent_meta + '">' + value.parent_title + '</label></li>');
 						}
-						 parent_title = value.parent_title;
+						parent_title = value.parent_title;
 
 
-						ffm_field_list.append('<li class="repeater-section"><label for="give-csv-toolkit-ffm-field-' + value.subkey + '"><input type="checkbox" name="give_csv_toolbox_export_option[' + value.subkey + ']" id="give-csv-toolkit-ffm-field-' + value.subkey + '">' + value.label + '</label></li>');
+						ffm_field_list.append('<li class="repeater-section repeater-section-' + value.parent_meta + '"><label for="give-csv-toolkit-ffm-field-' + value.subkey + '"><input type="checkbox" name="give_csv_toolbox_export_option[' + value.subkey + ']" id="give-csv-toolkit-ffm-field-' + value.subkey + '">' + value.label + '</label></li>');
 
 					});
 
@@ -162,6 +158,24 @@ jQuery.noConflict();
 		} else {
 			hidden_field_list.append('<li class="give-csv-toolbox-no-fields"><span class="dashicons dashicons-info"></span>No fields found.</li>');
 		}
+	}
+
+	/**
+	 * Toggle subfield checkboxes.
+	 *
+	 * This is necessary to ensure proper exporting of all custom field repeater data.
+	 */
+	function checkbox_select_subfields() {
+
+		$('.repeater-section-title input').on('click', function () {
+
+			var field_selector = $(this).parents('.repeater-section-title').data('parent-meta');
+			var checkboxes = $('.repeater-section-' + field_selector).find('input');
+
+			checkboxes.prop('checked', !checkboxes.prop('checked'));
+
+		});
+
 	}
 
 })(jQuery);
