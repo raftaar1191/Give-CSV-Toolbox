@@ -40,18 +40,29 @@ function give_csv_toolbox_get_custom_fields() {
 				&& 'repeat' === $field['input_type']
 			) {
 				$non_multicolumn_ffm_keys[] = $field['name'];
+
 				foreach ( $field['columns'] as $column ) {
+
 					// All other fields.
-					$ffm_field_array[] = array(
-						'subkey' => give_csv_toolbox_create_column_key( $column ),
-						'metakey' => $field['name'],
-						'label'   => $column,
+					$ffm_field_array['repeaters'][] = array(
+						'subkey'      => give_csv_toolbox_create_column_key( $column ),
+						'metakey'     => $field['name'],
+						'label'       => $column,
+						'multi'       => 'true',
+						'parent_meta' => $field['name'],
+						'parent_title' => $field['label'],
 					);
 				}
 			} else {
 				// All other fields.
-				$ffm_field_array[]          = array( 'subkey' => $field['name'], 'metakey' => $field['name'], 'label' => $field['label'] );
-				$non_multicolumn_ffm_keys[] = $field['name'];
+				$ffm_field_array['single'][] = array(
+					'subkey'  => $field['name'],
+					'metakey' => $field['name'],
+					'label'   => $field['label'],
+					'multi'   => 'false',
+					'parent'  => '',
+				);
+				$non_multicolumn_ffm_keys[]  = $field['name'];
 			}
 		}
 	}

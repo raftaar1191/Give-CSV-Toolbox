@@ -16,9 +16,9 @@ jQuery.noConflict();
 
 		toggle_csv_toolbox_fields();
 		$('input[type="submit"]').on('click', function () {
-			setTimeout(function(){
+			setTimeout(function () {
 				$('input[type="submit"]').attr('class', 'button button-primary');
-			},800);
+			}, 800);
 
 		});
 	});
@@ -79,29 +79,61 @@ jQuery.noConflict();
 	 */
 	function output_csv_toolbox_fields(response) {
 
+		/**
+		 * FFM Fields
+		 */
 		var ffm_fields = (typeof response.ffm_fields !== 'undefined') ? response.ffm_fields : '';
 		var ffm_field_list = $('#give-csv-toolbox-ffm-field-list');
 
-		if (ffm_fields.length > 0) {
+		if (ffm_fields) {
 
 			// Loop through FFM fields & output
 			$(ffm_fields).each(function (index, value) {
 
-				console.log(value);
+				// Repeater sections.
+				var repeater_sections = (typeof value.repeaters !== 'undefined') ? value.repeaters : '';
 
-				ffm_field_list.append('<li><label for="give-csv-toolkit-ffm-field-' + value.subkey + '"><input type="checkbox" name="give_csv_toolbox_export_option[' + value.metakey + ']" id="give-csv-toolkit-ffm-field-' + value.subkey + '">' + value.label + '</label> </li>');
+				if (repeater_sections) {
 
+					var parent_title = '';
+					// Repeater section field.
+					$(repeater_sections).each(function (index, value) {
+
+						if(parent_title !== value.parent_title) {
+							ffm_field_list.append('<li class="repeater-section-title"><label for="give-csv-toolkit-ffm-field-' + value.parent_meta + '"><input type="checkbox" name="give_csv_toolbox_export_option[' + value.parent_meta + ']" id="give-csv-toolkit-ffm-field-' + value.parent_meta + '">' + value.parent_title + '</label></li>');
+						}
+						 parent_title = value.parent_title;
+
+
+						ffm_field_list.append('<li class="repeater-section"><label for="give-csv-toolkit-ffm-field-' + value.subkey + '"><input type="checkbox" name="give_csv_toolbox_export_option[' + value.metakey + ']" id="give-csv-toolkit-ffm-field-' + value.subkey + '">' + value.label + '</label></li>');
+
+					});
+
+				}
+
+				// Repeater sections.
+				var single_repeaters = (typeof value.single !== 'undefined') ? value.single : '';
+				if (single_repeaters) {
+
+					// Repeater section field.
+					$(single_repeaters).each(function (index, value) {
+
+						ffm_field_list.append('<li><label for="give-csv-toolkit-ffm-field-' + value.subkey + '"><input type="checkbox" name="give_csv_toolbox_export_option[' + value.metakey + ']" id="give-csv-toolkit-ffm-field-' + value.subkey + '">' + value.label + '</label> </li>');
+
+					});
+
+				}
 			});
 
 		} else {
-
 			ffm_field_list.append('<li class="give-csv-toolbox-no-fields"><span class="dashicons dashicons-info"></span>No fields found.</li>');
-
 		}
 
+		/**
+		 * Standard Fields
+		 */
 		var standard_fields = (typeof response.standard_fields !== 'undefined') ? response.standard_fields : '';
 		var standard_field_list = $('#give-csv-toolbox-standard-field-list');
-
 		if (standard_fields.length > 0) {
 
 			// Loop through STANDARD fields & output
@@ -112,14 +144,14 @@ jQuery.noConflict();
 			});
 
 		} else {
-
 			standard_field_list.append('<li class="give-csv-toolbox-no-fields"><span class="dashicons dashicons-info"></span>No fields found.</li>');
-
 		}
 
+		/**
+		 * Hidden Fields
+		 */
 		var hidden_fields = (typeof response.hidden_fields !== 'undefined') ? response.hidden_fields : '';
 		var hidden_field_list = $('#give-csv-toolbox-hidden-field-list');
-
 		if (hidden_fields.length > 0) {
 
 			// Loop through HIDDEN fields & output
@@ -128,11 +160,8 @@ jQuery.noConflict();
 			});
 
 		} else {
-
 			hidden_field_list.append('<li class="give-csv-toolbox-no-fields"><span class="dashicons dashicons-info"></span>No fields found.</li>');
-
 		}
-
 	}
 
 })(jQuery);
