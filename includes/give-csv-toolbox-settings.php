@@ -94,6 +94,7 @@ if ( ! class_exists( 'Give_Settings_CSV' ) ) :
 								'name'   => 'forms',
 								'id'     => 'give_customer_export_form',
 								'chosen' => true,
+								'number' => - 1,
 							);
 							echo Give()->html->forms_dropdown( $args ); ?>
                         </div>
@@ -181,6 +182,13 @@ if ( ! class_exists( 'Give_Settings_CSV' ) ) :
                                         <input type="checkbox" checked
                                                name="give_csv_toolbox_export_option[donation_total]"
                                                id="give-export-donation-sum"><?php esc_html_e( 'Donation Total', 'give' ); ?>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label for="give-export-donation-status">
+                                        <input type="checkbox" checked
+                                               name="give_csv_toolbox_export_option[donation_status]"
+                                               id="give-export-donation-status"><?php esc_html_e( 'Donation Status', 'give' ); ?>
                                     </label>
                                 </li>
                                 <li>
