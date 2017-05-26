@@ -92,7 +92,7 @@ if ( ! class_exists( 'Give_Settings_CSV' ) ) :
 							<?php
 							$args = array(
 								'name'   => 'forms',
-								'id'     => 'give_customer_export_form',
+								'id'     => 'give-form-for-csv-export',
 								'chosen' => true,
 								'number' => - 1,
 							);
