@@ -13,9 +13,7 @@ jQuery.noConflict();
 	 * On DOM ready. Kicks it off.
 	 */
 	$(function () {
-
 		toggle_csv_toolbox_fields();
-
 	});
 
 	/**

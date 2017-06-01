@@ -32,7 +32,7 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 	public $export_type = 'payments';
 
 	/**
-	 * Form submission data
+	 * Form submission data.
 	 *
 	 * @var array
 	 * @since 1.0
@@ -40,7 +40,7 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 	private $data = array();
 
 	/**
-	 * Form submission data
+	 * Form submission data.
 	 *
 	 * @var array
 	 * @since 1.0
@@ -48,7 +48,7 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 	private $cols = array();
 
 	/**
-	 * Form ID
+	 * Form ID.
 	 *
 	 * @var string
 	 * @since 1.0
@@ -56,11 +56,11 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 	private $form_id = '';
 
 	/**
-	 * Set the properties specific to the Customers export
+	 * Set the properties specific to the export.
 	 *
 	 * @since 1.0
 	 *
-	 * @param array $request The Form Data passed into the batch processing
+	 * @param array $request The Form Data passed into the batch processing.
 	 */
 	public function set_properties( $request ) {
 

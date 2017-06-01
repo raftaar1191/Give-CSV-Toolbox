@@ -167,6 +167,8 @@ function give_csv_toolbox_include_export_class( $class ) {
 
 
 /**
+ * Create column key.
+ *
  * @param $string
  *
  * @return string
