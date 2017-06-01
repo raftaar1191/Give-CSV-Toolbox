@@ -141,7 +141,6 @@ function give_csv_toolbox_get_custom_fields() {
 
 add_action( 'wp_ajax_give_csv_toolbox_get_custom_fields', 'give_csv_toolbox_get_custom_fields' );
 
-
 /**
  * Register the payments batch exporter
  *

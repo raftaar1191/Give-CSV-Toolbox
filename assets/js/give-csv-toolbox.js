@@ -52,7 +52,6 @@ jQuery.noConflict();
 
 					if (response) {
 
-						console.log(response);
 						output_csv_toolbox_fields(response);
 						checkbox_select_subfields();
 						toggle_fields.slideDown();

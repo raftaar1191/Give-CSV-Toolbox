@@ -175,7 +175,7 @@ function give_csv_toolbox_load() {
 	return false;
 }
 
-add_action( 'plugins_loaded', 'give_csv_toolbox_load' );
+add_action( 'plugins_loaded', 'give_csv_toolbox_load', 1 );
 
 
 /**
