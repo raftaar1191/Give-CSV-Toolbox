@@ -8,12 +8,12 @@
  */
 jQuery.noConflict();
 var give_csv_toolbox_vars;
-(function ($) {
+(function($) {
 
 	/**
 	 * On DOM ready. Kicks it off.
 	 */
-	$(function () {
+	$(function() {
 		toggle_csv_toolbox_fields();
 	});
 
@@ -22,12 +22,12 @@ var give_csv_toolbox_vars;
 	 */
 	function toggle_csv_toolbox_fields() {
 
-		if (give_csv_toolbox_vars.wp_debug === '1') {
+		if ( give_csv_toolbox_vars.wp_debug === '1' ) {
 			$('#give-csv-toolbox-standard-fields, #give-csv-toolbox-custom-fields-wrap, #give-csv-toolbox-submit-wrap, #give-csv-toolbox-export-options').show();
 		}
 
 
-		$('select[name="forms"]').chosen().change(function () {
+		$('select[name="forms"]').chosen().change(function() {
 
 			var toggle_fields = $('#give-csv-toolbox-standard-fields, #give-csv-toolbox-custom-fields-wrap, #give-csv-toolbox-submit-wrap, #give-csv-toolbox-export-options');
 
@@ -38,7 +38,7 @@ var give_csv_toolbox_vars;
 				variable_prices_html_container = $('.give-donation-level');
 
 			// Check for form ID.
-			if (!( give_form_id = $(this).val() )) {
+			if ( ! ( give_form_id = $(this).val() ) ) {
 				return false;
 			}
 
@@ -54,11 +54,11 @@ var give_csv_toolbox_vars;
 					// level_id: '',
 					action: 'give_csv_toolbox_get_custom_fields'
 				},
-				success: function (response) {
+				success: function(response) {
 
-					if (response) {
+					if ( response ) {
 
-						if (give_csv_toolbox_vars.wp_debug) {
+						if ( give_csv_toolbox_vars.wp_debug ) {
 							console.log(response);
 						}
 
@@ -89,21 +89,21 @@ var give_csv_toolbox_vars;
 		var ffm_fields = (typeof response.ffm_fields !== 'undefined') ? response.ffm_fields : '';
 		var ffm_field_list = $('#give-csv-toolbox-ffm-field-list');
 
-		if (ffm_fields) {
+		if ( ffm_fields ) {
 
 			// Loop through FFM fields & output
-			$(ffm_fields).each(function (index, value) {
+			$(ffm_fields).each(function(index, value) {
 
 				// Repeater sections.
 				var repeater_sections = (typeof value.repeaters !== 'undefined') ? value.repeaters : '';
 
-				if (repeater_sections) {
+				if ( repeater_sections ) {
 
 					var parent_title = '';
 					// Repeater section field.
-					$(repeater_sections).each(function (index, value) {
+					$(repeater_sections).each(function(index, value) {
 
-						if (parent_title !== value.parent_title) {
+						if ( parent_title !== value.parent_title ) {
 							ffm_field_list.append('<li class="repeater-section-title" data-parent-meta="' + value.parent_meta + '"><label for="give-csv-toolkit-ffm-field-' + value.parent_meta + '"><input type="checkbox" name="give_csv_toolbox_export_parent[' + value.parent_meta + ']" id="give-csv-toolkit-ffm-field-' + value.parent_meta + '">' + value.parent_title + '</label></li>');
 						}
 						parent_title = value.parent_title;
@@ -117,10 +117,10 @@ var give_csv_toolbox_vars;
 
 				// Repeater sections.
 				var single_repeaters = (typeof value.single !== 'undefined') ? value.single : '';
-				if (single_repeaters) {
+				if ( single_repeaters ) {
 
 					// Repeater section field.
-					$(single_repeaters).each(function (index, value) {
+					$(single_repeaters).each(function(index, value) {
 
 						ffm_field_list.append('<li><label for="give-csv-toolkit-ffm-field-' + value.subkey + '"><input type="checkbox" name="give_csv_toolbox_export_option[' + value.metakey + ']" id="give-csv-toolkit-ffm-field-' + value.subkey + '">' + value.label + '</label> </li>');
 
@@ -138,10 +138,10 @@ var give_csv_toolbox_vars;
 		 */
 		var standard_fields = (typeof response.standard_fields !== 'undefined') ? response.standard_fields : '';
 		var standard_field_list = $('#give-csv-toolbox-standard-field-list');
-		if (standard_fields.length > 0) {
+		if ( standard_fields.length > 0 ) {
 
 			// Loop through STANDARD fields & output
-			$(standard_fields).each(function (index, value) {
+			$(standard_fields).each(function(index, value) {
 
 				standard_field_list.append('<li><label for="give-csv-toolkit-standard-field-' + value + '"><input type="checkbox" name="give_csv_toolbox_export_option[' + value + ']" id="give-csv-toolkit-standard-field-' + value + '">' + value + '</label> </li>');
 
@@ -157,10 +157,10 @@ var give_csv_toolbox_vars;
 		var hidden_fields = response.hidden_fields ? response.hidden_fields : '';
 		var hidden_field_list = $('#give-csv-toolbox-hidden-field-list');
 
-		if (hidden_fields) {
+		if ( hidden_fields ) {
 
 			// Loop through HIDDEN fields & output.
-			$(hidden_fields).each(function (index, value) {
+			$(hidden_fields).each(function(index, value) {
 
 				hidden_field_list.append('<li><label for="give-csv-toolkit-hidden-field-' + value + '"><input type="checkbox" name="give_csv_toolbox_export_option[' + value + ']" id="give-csv-toolkit-hidden-field-' + value + '">' + value + '</label> </li>');
 			});
@@ -177,12 +177,12 @@ var give_csv_toolbox_vars;
 	 */
 	function checkbox_select_subfields() {
 
-		$('.repeater-section-title input').on('click', function () {
+		$('.repeater-section-title input').on('click', function() {
 
 			var field_selector = $(this).parents('.repeater-section-title').data('parent-meta');
 			var checkboxes = $('.repeater-section-' + field_selector).find('input');
 
-			checkboxes.prop('checked', !checkboxes.prop('checked'));
+			checkboxes.prop('checked', ! checkboxes.prop('checked'));
 
 		});
 
