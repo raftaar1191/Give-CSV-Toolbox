@@ -22,13 +22,12 @@ var give_csv_toolbox_vars;
 	 */
 	function toggle_csv_toolbox_fields() {
 
-		if(give_csv_toolbox_vars.wp_debug === '1') {
+		if (give_csv_toolbox_vars.wp_debug === '1') {
 			$('#give-csv-toolbox-standard-fields, #give-csv-toolbox-custom-fields-wrap, #give-csv-toolbox-submit-wrap, #give-csv-toolbox-export-options').show();
 		}
 
 
 		$('select[name="forms"]').chosen().change(function () {
-
 
 			var toggle_fields = $('#give-csv-toolbox-standard-fields, #give-csv-toolbox-custom-fields-wrap, #give-csv-toolbox-submit-wrap, #give-csv-toolbox-export-options');
 
@@ -59,9 +58,14 @@ var give_csv_toolbox_vars;
 
 					if (response) {
 
+						if (give_csv_toolbox_vars.wp_debug) {
+							console.log(response);
+						}
+
 						output_csv_toolbox_fields(response);
 						checkbox_select_subfields();
 						toggle_fields.slideDown();
+
 
 					} else {
 						alert('An AJAX error occurred.');
@@ -150,12 +154,14 @@ var give_csv_toolbox_vars;
 		/**
 		 * Hidden Fields
 		 */
-		var hidden_fields = (typeof response.hidden_fields !== 'undefined') ? response.hidden_fields : '';
+		var hidden_fields = response.hidden_fields ? response.hidden_fields : '';
 		var hidden_field_list = $('#give-csv-toolbox-hidden-field-list');
-		if (hidden_fields.length > 0) {
 
-			// Loop through HIDDEN fields & output
+		if (hidden_fields) {
+
+			// Loop through HIDDEN fields & output.
 			$(hidden_fields).each(function (index, value) {
+
 				hidden_field_list.append('<li><label for="give-csv-toolkit-hidden-field-' + value + '"><input type="checkbox" name="give_csv_toolbox_export_option[' + value + ']" id="give-csv-toolkit-hidden-field-' + value + '">' + value + '</label> </li>');
 			});
 
