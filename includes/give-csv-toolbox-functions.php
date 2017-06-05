@@ -35,21 +35,18 @@ function give_csv_toolbox_get_custom_fields() {
 		foreach ( $custom_fields as $field ) {
 
 			// Assemble multi-column repeater fields.
-			if (
-				isset( $field['multiple'] )
-				&& 'repeat' === $field['input_type']
-			) {
+			if ( isset( $field['multiple'] ) && 'repeat' === $field['input_type'] ) {
 				$non_multicolumn_ffm_keys[] = $field['name'];
 
 				foreach ( $field['columns'] as $column ) {
 
 					// All other fields.
 					$ffm_field_array['repeaters'][] = array(
-						'subkey'      => give_csv_toolbox_create_column_key( $column ),
-						'metakey'     => $field['name'],
-						'label'       => $column,
-						'multi'       => 'true',
-						'parent_meta' => $field['name'],
+						'subkey'       => give_csv_toolbox_create_column_key( $column ),
+						'metakey'      => $field['name'],
+						'label'        => $column,
+						'multi'        => 'true',
+						'parent_meta'  => $field['name'],
 						'parent_title' => $field['label'],
 					);
 				}
@@ -65,7 +62,7 @@ function give_csv_toolbox_get_custom_fields() {
 				$non_multicolumn_ffm_keys[]  = $field['name'];
 			}
 		}
-	}
+	}// End if().
 
 	$args          = array(
 		'give_forms'     => array( $form_id ),
@@ -120,6 +117,7 @@ function give_csv_toolbox_get_custom_fields() {
 		'_give_payment_total',
 		'_give-form-fields_id',
 		'_give_completed_date',
+		'_give_payment_purchase_key',
 	);
 
 	// Unset ignored FFM keys.
@@ -131,8 +129,8 @@ function give_csv_toolbox_get_custom_fields() {
 
 	wp_send_json( array(
 		'ffm_fields'      => $ffm_field_array,
-		'standard_fields' => $meta_keys,
-		'hidden_fields'   => $hidden_meta_keys,
+		'standard_fields' => array_values( $meta_keys ),
+		'hidden_fields'   => array_values( $hidden_meta_keys ),
 	) );
 
 	give_die();
