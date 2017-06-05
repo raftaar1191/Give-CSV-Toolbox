@@ -7,6 +7,7 @@
  * @license:     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 jQuery.noConflict();
+var give_csv_toolbox_vars;
 (function ($) {
 
 	/**
@@ -21,7 +22,13 @@ jQuery.noConflict();
 	 */
 	function toggle_csv_toolbox_fields() {
 
+		if(give_csv_toolbox_vars.wp_debug === '1') {
+			$('#give-csv-toolbox-standard-fields, #give-csv-toolbox-custom-fields-wrap, #give-csv-toolbox-submit-wrap, #give-csv-toolbox-export-options').show();
+		}
+
+
 		$('select[name="forms"]').chosen().change(function () {
+
 
 			var toggle_fields = $('#give-csv-toolbox-standard-fields, #give-csv-toolbox-custom-fields-wrap, #give-csv-toolbox-submit-wrap, #give-csv-toolbox-export-options');
 

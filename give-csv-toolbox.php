@@ -100,14 +100,19 @@ if ( ! class_exists( 'Give_CSV_Toolbox' ) ) {
 		 */
 		public function admin_enqueue_scripts( $hook ) {
 
-			if ( isset( $_GET['tab'] )
-			     && 'csv-toolbox' === $_GET['tab'] ) {
+			if ( isset( $_GET['tab'] ) && 'csv-toolbox' === $_GET['tab'] ) {
 
 				wp_register_style( 'give-csv-css', GIVE_CSV_TOOLBOX_URL . 'assets/css/give-csv-toolbox.css' );
 				wp_enqueue_style( 'give-csv-css' );
 
 				wp_register_script( 'give-csv-js', GIVE_CSV_TOOLBOX_URL . 'assets/js/give-csv-toolbox.js', array( 'jquery' ) );
 				wp_enqueue_script( 'give-csv-js' );
+
+				$ajax_vars = array(
+					'wp_debug' => WP_DEBUG,
+				);
+
+				wp_localize_script( 'give-csv-js', 'give_csv_toolbox_vars', $ajax_vars );
 
 			}
 
