@@ -407,7 +407,7 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 									$data[ $i ][ $keyname ] = '';
 								}
 
-								$this->cols[ $keyname ] = '';
+								$this->cols[ $keyname ] = 'Repeater ' . $field['columns'][ $count ];
 
 								unset( $columns[ $keyname ] );
 
