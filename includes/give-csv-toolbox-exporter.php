@@ -360,7 +360,6 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 
 					// Get the custom fields for the payment's form.
 					$ffm     = new Give_FFM_Render_Form();
-					$prefix  = 'repeater_';
 					list(
 						$post_fields,
 						$taxonomy_fields,
@@ -384,7 +383,7 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 
 							// Loop through columns
 							for ( $count = 0; $count < $num_columns; $count ++ ) {
-								$keyname = $prefix . give_csv_toolbox_create_column_key( $field['columns'][ $count ] );
+								$keyname = 'repeater_' . give_csv_toolbox_create_column_key( $field['columns'][ $count ] );
 								$items   = (array) $ffm->get_meta( $payment->ID, $field['name'], 'post', false );
 
 								// Reassemble arrays.
@@ -407,7 +406,7 @@ class Give_CSV_Toolbox_Donations_Export extends Give_Batch_Export {
 									$data[ $i ][ $keyname ] = '';
 								}
 
-								$this->cols[ $keyname ] = 'Repeater ' . $field['columns'][ $count ];
+								$this->cols[ $keyname ] = '';
 
 								unset( $columns[ $keyname ] );
 

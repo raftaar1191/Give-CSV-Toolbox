@@ -42,7 +42,7 @@ function give_csv_toolbox_get_custom_fields() {
 
 					// All other fields.
 					$ffm_field_array['repeaters'][] = array(
-						'subkey'       => give_csv_toolbox_create_column_key( $column ),
+						'subkey'       => 'repeater_' . give_csv_toolbox_create_column_key( $column ),
 						'metakey'      => $field['name'],
 						'label'        => $column,
 						'multi'        => 'true',
