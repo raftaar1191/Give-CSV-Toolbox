@@ -87,17 +87,18 @@ if ( ! class_exists( 'Give_Settings_CSV' ) ) :
                 </div>
                 <td>
                     <form method="post" id="give-csv-toolbox" class="give-export-form">
-                        <div id="give-csv-toolbox-form-select-wrap">
-                            <h4><?php esc_html_e( 'Select a Donation Form:', 'give' ); ?></h4>
-							<?php
-							$args = array(
-								'name'   => 'forms',
-								'id'     => 'give-form-for-csv-export',
-								'chosen' => true,
-								'number' => - 1,
-							);
-							echo Give()->html->forms_dropdown( $args ); ?>
-                        </div>
+	                    <div id="give-csv-toolbox-form-select-wrap">
+		                    <h4><?php esc_html_e( 'Select a Donation Form:', 'give' ); ?></h4>
+		                    <?php
+		                    $args = array(
+			                    'name'        => 'forms',
+			                    'id'          => 'give-form-for-csv-export',
+			                    'chosen'      => true,
+			                    'number'      => - 1,
+			                    'placeholder' => esc_attr__( 'Select a Donation Form', 'give' ),
+		                    );
+		                    echo Give()->html->forms_dropdown( $args ); ?>
+	                    </div>
 
                         <div id="give-csv-toolbox-export-options">
 
