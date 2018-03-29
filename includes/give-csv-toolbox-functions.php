@@ -72,14 +72,14 @@ function give_csv_toolbox_get_custom_fields() {
 	$donation_list = implode( '\',\'', (array) give_get_payments( $args ) );
 
 	$query = "
-        SELECT DISTINCT($wpdb->postmeta.meta_key) 
+        SELECT DISTINCT($wpdb->paymentmeta.meta_key) 
         FROM $wpdb->posts 
-        LEFT JOIN $wpdb->postmeta 
-        ON $wpdb->posts.ID = $wpdb->postmeta.post_id
+        LEFT JOIN $wpdb->paymentmeta 
+        ON $wpdb->posts.ID = $wpdb->paymentmeta.payment_id
         WHERE $wpdb->posts.post_type = '%s'
         AND $wpdb->posts.ID IN (%s)
-        AND $wpdb->postmeta.meta_key != '' 
-        AND $wpdb->postmeta.meta_key NOT RegExp '(^[_0-9].+$)'
+        AND $wpdb->paymentmeta.meta_key != '' 
+        AND $wpdb->paymentmeta.meta_key NOT RegExp '(^[_0-9].+$)'
     ";
 
 	$meta_keys = $wpdb->get_col( $wpdb->prepare( $query, $post_type, $donation_list ) );
@@ -92,14 +92,14 @@ function give_csv_toolbox_get_custom_fields() {
 	}
 
 	$query = "
-        SELECT DISTINCT($wpdb->postmeta.meta_key) 
+        SELECT DISTINCT($wpdb->paymentmeta.meta_key) 
         FROM $wpdb->posts 
-        LEFT JOIN $wpdb->postmeta 
-        ON $wpdb->posts.ID = $wpdb->postmeta.post_id 
+        LEFT JOIN $wpdb->paymentmeta 
+        ON $wpdb->posts.ID = $wpdb->paymentmeta.payment_id 
         WHERE $wpdb->posts.post_type = '%s' 
         AND $wpdb->posts.ID IN (%s)
-        AND $wpdb->postmeta.meta_key != '' 
-        AND $wpdb->postmeta.meta_key NOT RegExp '^[^_]'
+        AND $wpdb->paymentmeta.meta_key != '' 
+        AND $wpdb->paymentmeta.meta_key NOT RegExp '^[^_]'
     ";
 
 	$hidden_meta_keys   = $wpdb->get_col( $wpdb->prepare( $query, $post_type, $donation_list ) );
@@ -132,8 +132,6 @@ function give_csv_toolbox_get_custom_fields() {
 		'standard_fields' => array_values( $meta_keys ),
 		'hidden_fields'   => array_values( $hidden_meta_keys ),
 	) );
-
-	give_die();
 
 }
 
